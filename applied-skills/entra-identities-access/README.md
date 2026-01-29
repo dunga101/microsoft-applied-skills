@@ -44,32 +44,33 @@ This scenario was designed to represent a realistic external sign-in attempt inv
 
 ---
 
-### Policy Evaluation Results
+## Policy Evaluation Logic (Conceptual Summary)
 
-Conditional Access policies were evaluated independently based on assignment scope and configured conditions.
+Conditional Access policies are evaluated independently during sign-in based on assignment scope and configured conditions.
 
-#### Policies that applied
+The evaluation process follows these principles:
 
-- **Policy2**  
-  - Assigned directly to Diego Siciliani  
-  - Policy state: Enforced  
-  - Applied successfully because user assignment conditions were met  
+- Each policy is assessed individually against the sign-in context.
+- Policies apply only when the user or group assignment is in scope.
+- All configured conditions (such as device platform, application, location, or risk) must be satisfied for a policy to be considered applicable.
+- Policies that are not assigned to the signing-in identity are excluded from evaluation.
+- Multiple policies can apply simultaneously during a single authentication attempt.
 
-- **Policy3**  
-  - Assigned to all users  
-  - Policy state: Report-only  
-  - Evaluated for visibility and impact analysis  
+### Policy State Considerations
 
-- **Policy4**  
-  - Assigned to all users  
-  - Policy state: Report-only  
-  - Evaluated to observe potential enforcement behavior  
+- **Enforced policies** actively apply access controls and directly affect sign-in outcomes.
+- **Report-only policies** do not block or enforce access but provide visibility into how enforcement would behave if enabled.
+- Report-only mode is commonly used to validate policy impact before production rollout.
 
-#### Policies that did not apply
+### Evaluation Outcome Interpretation
 
-- **Policy1**  
-  - Assigned to a different user (Alex Wilber)  
-  - Excluded from evaluation due to user assignment mismatch  
+During sign-in analysis:
+
+- Applicable policies contribute to the final access decision.
+- Non-applicable policies are ignored without impact.
+- Visibility from report-only policies helps identify unintended access restrictions, overlap, or conflicts.
+
+This evaluation model allows identity engineers to validate security posture while minimizing disruption to end users.
 
 ---
 
