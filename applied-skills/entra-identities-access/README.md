@@ -1,167 +1,208 @@
 # Microsoft Applied Skills  
 ## Get started with identities and access using Microsoft Entra
 
-Documentation and technical notes for the Microsoft Applied Skills assessment focused on identity and access management using Microsoft Entra ID.
+Documentation and technical notes derived from completing the Microsoft Applied Skills assessment focused on identity and access management using Microsoft Entra ID.
+
+This repository captures architectural concepts, evaluation logic, and identity engineering takeaways learned through hands-on validation, without exposing assessment material or implementation-specific configurations.
 
 ---
 
 ## Assessment Overview
 
-This Applied Skills assessment evaluated hands-on identity and access management operations within Microsoft Entra ID.  
-The focus was on understanding how Conditional Access policies are evaluated during authentication and how risk-based signals influence access decisions.
+This Applied Skills assessment evaluated practical identity and access management operations within Microsoft Entra ID.
 
-The assessment environment simulated real-world enterprise scenarios involving user sign-ins, device platforms, network locations, and identity risk.
+The primary focus was understanding how Conditional Access functions as a real-time decision engine and how identity signals—such as user context, device posture, location, and risk—combine to determine access outcomes during authentication.
+
+The environment reflected realistic enterprise identity scenarios, emphasizing reasoning, validation, and interpretation rather than isolated configuration tasks.
+
+---
 
 ## Assessment Objectives
 
-- Evaluate Conditional Access policy behavior under different sign-in conditions
-- Use What If analysis to determine policy applicability and order of evaluation
-- Understand the impact of report-only versus enforced policies
-- Configure and validate named locations for access control logic
-- Review authentication methods, MFA, and Self-Service Password Reset configuration
-- Interpret sign-in risk signals and their effect on access decisions
-## Conditional Access Policy Evaluation
+The assessment validated the ability to:
 
-This assessment focused on understanding how Microsoft Entra evaluates Conditional Access policies during user authentication and how multiple identity signals combine to determine final access outcomes.
-
-Policy behavior was analyzed using the **What If** tool (Microsoft Entra ID P2), which simulates real sign-in attempts and provides detailed visibility into policy applicability, evaluation results, and access decisions.
+- Understand Conditional Access as a policy-based access control framework
+- Evaluate policy behavior under varied authentication conditions
+- Analyze how identity signals influence access decisions
+- Validate access logic prior to enforcement
+- Interpret Conditional Access outcomes using structured testing tools
+- Apply risk-aware identity security principles
 
 ---
 
-### Evaluation Method
+## Conditional Access Evaluation Framework
 
-A simulated sign-in scenario was configured with the following attributes:
+Conditional Access in Microsoft Entra operates as a dynamic identity policy engine.
 
-- **User:** Diego Siciliani  
-- **Application:** Microsoft Exchange Online  
-- **Client type:** Browser  
-- **Device platform:** Android  
-- **Network location:** United States  
-- **IP address:** 131.107.#.##  
-- **Sign-in risk level:** High  
+During authentication, multiple contextual signals are collected and evaluated to determine whether access should be allowed, restricted, or challenged.
 
-This scenario was designed to represent a realistic external sign-in attempt involving elevated identity risk.
+Key signal categories include:
 
----
+- Identity context (user or group assignment)
+- Application context (cloud resources)
+- Client context (browser or application type)
+- Device context (platform or compliance posture)
+- Network context (location-based indicators)
+- Risk context (sign-in and identity risk)
 
-## Policy Evaluation Logic (Conceptual Summary)
-
-Conditional Access policies are evaluated independently during sign-in based on assignment scope and configured conditions.
-
-The evaluation process follows these principles:
-
-- Each policy is assessed individually against the sign-in context.
-- Policies apply only when the user or group assignment is in scope.
-- All configured conditions (such as device platform, application, location, or risk) must be satisfied for a policy to be considered applicable.
-- Policies that are not assigned to the signing-in identity are excluded from evaluation.
-- Multiple policies can apply simultaneously during a single authentication attempt.
-
-### Policy State Considerations
-
-- **Enforced policies** actively apply access controls and directly affect sign-in outcomes.
-- **Report-only policies** do not block or enforce access but provide visibility into how enforcement would behave if enabled.
-- Report-only mode is commonly used to validate policy impact before production rollout.
-
-### Evaluation Outcome Interpretation
-
-During sign-in analysis:
-
-- Applicable policies contribute to the final access decision.
-- Non-applicable policies are ignored without impact.
-- Visibility from report-only policies helps identify unintended access restrictions, overlap, or conflicts.
-
-This evaluation model allows identity engineers to validate security posture while minimizing disruption to end users.
+Access decisions are derived from the combined evaluation of these signals rather than a single condition.
 
 ---
 
-### Key Observations
+## Policy Evaluation Logic (Conceptual)
 
-- Conditional Access policies are evaluated **independently**, not in sequence.
-- A policy applies only when **all assignment and condition criteria are satisfied**.
-- Policies in **report-only mode** are fully evaluated but do not enforce access controls.
-- The What If tool clearly identifies **why a policy does or does not apply**, eliminating uncertainty during troubleshooting.
-- User assignment is a primary gating factor — policies not scoped to the signing-in user are excluded immediately.
+Conditional Access policies are evaluated independently against the authentication context.
+
+The evaluation process follows these core principles:
+
+- Each policy is assessed individually
+- Policy relevance is determined first by assignment scope
+- All configured conditions must be satisfied for applicability
+- Multiple policies may apply simultaneously
+- Policies outside assignment scope are excluded immediately
+
+There is no sequential “first-match” logic.  
+Applicable policies collectively influence the final access decision.
 
 ---
 
-### Operational Insight
+## Policy State Considerations
 
-This evaluation reinforced the importance of validating Conditional Access behavior through structured testing rather than assumption.
+Conditional Access policies may operate in different enforcement states.
 
-Using What If analysis enables administrators to:
+### Enforced Policies
 
-- Safely test high-risk sign-in scenarios without affecting production users
-- Validate policy scope prior to enforcement
-- Identify overlapping or redundant Conditional Access policies
-- Reduce the risk of unintended access blocks during rollout
+- Actively apply access controls
+- Directly affect authentication outcomes
+- Used for production security enforcement
 
-This approach supports controlled security posture improvements while maintaining operational stability.
+### Report-Only Policies
+
+- Fully evaluated during sign-in
+- Do not block or enforce access
+- Provide visibility into potential enforcement behavior
+- Commonly used to validate policy impact prior to rollout
+
+Report-only mode enables safe testing of access controls without user disruption.
+
+---
+
+## Role of What If Analysis
+
+The What If tool in Microsoft Entra ID provides deterministic simulation of authentication scenarios.
+
+This allows administrators to:
+
+- Safely test sign-in conditions
+- Validate policy applicability
+- Understand why policies apply or do not apply
+- Identify assignment or condition mismatches
+- Evaluate enforcement impact before deployment
+
+Structured simulation significantly reduces uncertainty during identity troubleshooting and policy design.
+
+---
+
+## Operational Observations
+
+Key behaviors reinforced through evaluation include:
+
+- Conditional Access policies are evaluated independently
+- Assignment scope acts as the primary gating factor
+- Conditions are evaluated only after assignment inclusion
+- Report-only policies provide full evaluation visibility
+- Multiple policies can influence a single authentication event
+
+These behaviors highlight the need for strong identity governance as environments scale.
+
+---
+
 ## Lessons Learned / Identity Engineering Takeaways
 
-This assessment reinforced several critical principles that govern effective identity and access management in enterprise environments.
+### Identity Is the Modern Security Perimeter
+
+Security enforcement has shifted from network-centric controls to identity-centric decision making.
+
+Microsoft Entra evaluates access dynamically using real-time context rather than static allow or deny rules.
+
+Conditional Access functions as the central enforcement layer of modern Zero Trust architectures.
 
 ---
 
-### Identity Is the Primary Security Control Plane
+### Policy Assignment Determines Relevance First
 
-Modern security decisions are no longer enforced solely at the network perimeter. Identity now serves as the central enforcement point where user context, device posture, location, and risk signals converge.
+Policy evaluation begins with assignment scope.
 
-Conditional Access operates as a real-time policy engine that evaluates identity signals dynamically rather than relying on static allow or deny rules.
+If a user or group is not included in a policy assignment, the policy is excluded entirely—regardless of matching conditions.
 
----
-
-### Policy Assignment Determines Relevance Before Conditions Are Evaluated
-
-Conditional Access evaluation begins with **policy assignment scope**.
-
-If a user is not included in the policy assignment, the policy is excluded immediately—regardless of how well other conditions match the sign-in scenario. This reinforces the importance of:
+This reinforces the importance of:
 
 - Precise user and group targeting
-- Avoiding overly broad “All users” assignments without justification
-- Clearly documenting policy ownership and intent
+- Avoiding unnecessary broad assignments
+- Clearly documenting policy intent
+- Maintaining ownership and governance
 
-Mis-scoped assignments are a common root cause of both overblocking and security gaps.
-
----
-
-### Report-Only Mode Is a Critical Engineering Control
-
-Report-only mode is not merely a testing feature—it is an essential identity engineering safeguard.
-
-Using report-only policies enables administrators to:
-
-- Observe policy behavior without user impact
-- Validate condition logic against real sign-in patterns
-- Identify unintended enforcement scenarios early
-- Safely evaluate complex access models involving multiple signals
-
-Effective identity design relies on measured rollout rather than immediate enforcement.
+Mis-scoped assignments are a common source of both overblocking and security gaps.
 
 ---
 
-### What If Analysis Enables Deterministic Troubleshooting
+### Report-Only Mode Is an Engineering Safeguard
 
-The What If tool provides deterministic visibility into Conditional Access behavior by clearly identifying:
+Report-only mode is a critical identity engineering control.
 
-- Which policies apply
-- Which policies do not apply
-- The specific reason each decision was made
+It enables teams to:
 
-This eliminates guesswork and significantly reduces troubleshooting time compared to reviewing raw sign-in logs alone.
+- Validate policy logic safely
+- Observe potential enforcement behavior
+- Detect overlap or conflicts early
+- Prevent accidental user lockouts
+- Support controlled rollout strategies
 
-Structured simulation should always precede enforcement changes.
+Effective identity design relies on measured validation rather than immediate enforcement.
 
 ---
 
-### Overlapping Policies Increase Complexity and Require Governance
+### Deterministic Testing Reduces Risk
 
-When multiple Conditional Access policies target similar users or applications, complexity increases rapidly.
+Simulation-based testing using tools such as What If analysis enables predictable access outcomes.
 
-Without documentation and periodic review, organizations risk:
+This approach:
 
-- Redundant policy enforcement
+- Reduces troubleshooting time
+- Improves confidence in enforcement decisions
+- Supports structured change management
+- Strengthens overall identity maturity
+
+Identity logic should be tested with the same rigor as infrastructure or application changes.
+
+---
+
+### Governance Is Essential at Scale
+
+As Conditional Access environments grow, complexity increases rapidly.
+
+Without documentation and governance, organizations risk:
+
+- Policy sprawl
+- Redundant enforcement
 - Conflicting access requirements
 - Reduced troubleshooting clarity
-- Operational drift over time
+- Long-term operational drift
 
-Identity governance is as important as policy creation
+Identity governance must evolve alongside policy creation to maintain clarity and control.
+
+---
+
+## Summary
+
+This Applied Skills assessment reinforced that strong identity security is achieved through deliberate engineering practices rather than configuration alone.
+
+Effective identity posture depends on:
+
+- Clear policy intent
+- Precise assignment scoping
+- Structured validation
+- Controlled enforcement
+- Ongoing governance
+
+Microsoft Entra Conditional Access provides powerful capabilities, but those capabilities must be designed, tested, and governed thoughtfully to balance security and operational stability.
