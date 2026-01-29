@@ -37,7 +37,7 @@ A simulated sign-in scenario was configured with the following attributes:
 - **Client type:** Browser  
 - **Device platform:** Android  
 - **Network location:** United States  
-- **IP address:** 131.107.1.10  
+- **IP address:** 131.107.#.##  
 - **Sign-in risk level:** High  
 
 This scenario was designed to represent a realistic external sign-in attempt involving elevated identity risk.
